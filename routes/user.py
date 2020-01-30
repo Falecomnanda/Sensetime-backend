@@ -30,13 +30,14 @@ def users(id=None):
 
         user = User()
         user.username = request.json.get('username')
-        user.email = request.json.get('email')
+        user.fullname = request.json.get('fullname')
+        user.phone = request.json.get('phone')
         user.password = bcrypt.generate_password_hash(password)
 
         db.session.add(user)
         db.session.commit()
 
-        sendMail("Welcome "+user.username , user.username, "cm.seb90@gmail.com", user.email, "Welcome "+user.username)
+        sendMail("Welcome "+user.fullname , user.username, "cm.seb90@gmail.com", user.username, "Welcome "+user.fullname)
 
         return jsonify(user.serialize()), 201
     
@@ -44,21 +45,21 @@ def users(id=None):
         password = request.json.get('password')
         user = User.query.get(id)
         user.username = request.json.get('username')
-        user.email = request.json.get('email')
+        user.fullname = request.json.get('fullname')
+        user.phone = request.json.get('phone')
         user.password = bcrypt.generate_password_hash(password)
 
         db.session.commit()
 
-        sendMail("Hello "+user.username , user.username, "cm.seb90@gmail.com", user.email, "Successfully update "+user.username)
+        sendMail("Hello "+user.fullname , user.username, "cm.seb90@gmail.com", user.username, "Successfully update "+user.fullname)
 
         return jsonify(user.serialize()), 200
 
     if request.method == 'DELETE':
-        
         user = User.query.get(id)
         db.session.delete(user)
         db.session.commit()
 
-        sendMail("Bye "+user.username , user.username, "cm.seb90@gmail.com", user.email, "Correct user deleting")
+        sendMail("Bye "+user.fullname , user.username, "cm.seb90@gmail.com", user.username, "Correct user deleting")
 
         return jsonify({'user':'Deleted'}), 200

@@ -7,6 +7,7 @@ from models import db, User
 from libs.functions import sendMail
 bcrypt = Bcrypt()
 auth = Blueprint('auth', __name__)
+
 @auth.route('/login', methods=['POST'])
 def login():
     username = request.json.get('username')
@@ -32,12 +33,15 @@ def login():
 @auth.route('/register', methods=['POST'])
 def register():
     username = request.json.get('username')
-    email = request.json.get('email')
+    fullname = request.json.get('fullname')
+    phone = request.json.get('phone')
     password = request.json.get('password')
     if not username:
         return jsonify({"msg": "username is required"}), 422
-    if not email:
-        return jsonify({"msg": "email is required"}), 422        
+    if not fullname:
+        return jsonify({"msg": "fullname is required"}), 422
+    if not phone:
+        return jsonify({"msg": "phone is required"}), 422              
     if not password:
         return jsonify({"msg": "password is required"}), 422
     user = User.query.filter_by(username=username).first()
@@ -45,12 +49,13 @@ def register():
         return jsonify({"msg": "username is taken"}), 422
     user = User()
     user.username = username
-    user.email = email
+    user.fullname = fullname
+    user.phone = phone
     user.password = bcrypt.generate_password_hash(password)
     db.session.add(user)
     db.session.commit()
 
-    sendMail("Welcome " + user.username , user.username, "cm.seb90@gmail.com", user.email, "Welcome "+user.username)
+    sendMail("Welcome "+user.fullname , user.username, "cm.seb90@gmail.com", user.username, "Welcome "+user.fullname)
 
     if bcrypt.check_password_hash(user.password, password):
         access_token = create_access_token(identity=user.username)
