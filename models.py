@@ -24,6 +24,9 @@ class Profesor(db.Model):
     __tablename__ = 'profesores'
     id=db.Column(db.Integer, primary_key=True)
     profesor=db.Column(db.String(50), nullable=False)
+    telefono=db.Column(db.String(50), nullable=False)
+    rut=db.Column(db.String(50), nullable=False)
+    email=db.Column(db.String(50), nullable=False)
 
     def __repr__(self):
         return 'Profesor %r' % self.profesor
@@ -32,6 +35,10 @@ class Profesor(db.Model):
         return{
             'id': self.id,
             'profesor': self.profesor,
+            'telefono': self.telefono,
+            'rut': self.rut,
+            'email': self.email,
+            
         }
 
 class Sede(db.Model):
@@ -62,22 +69,32 @@ class Curso(db.Model):
             'curso': self.curso,
         }
 
-""" class DetailCurso(db.Model):
-    __tablename__ = 'detailsCurso'
+class DetailsCurso(db.Model):
+    __tablename__ = 'detailscursos'
     id=db.Column(db.Integer, primary_key=True)
     fecha=db.Column(db.String(50), nullable=False)
-    cupos=db.Column(db.String(50), nullable=False)
-
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    user = db.relationship(User)
+    hora=db.Column(db.String(50), nullable=False)
+    text=db.Column(db.String(200), nullable=False)
+    
+    curso_id = db.Column(db.Integer, db.ForeignKey('cursos.id'), nullable=False)
+    curso = db.relationship(Curso)
+    sede_id = db.Column(db.Integer, db.ForeignKey('sedes.id'), nullable=False)
+    sede = db.relationship(Sede)
+    profesor_id = db.Column(db.Integer, db.ForeignKey('profesores.id'), nullable=False)
+    profesor = db.relationship(Profesor)
 
     def __repr__(self):
-        return 'DetailCurso %r' % self.curso
+        return 'DetailsCurso %r' % self.curso
 
     def serialize(self):
         return{
             'id': self.id,
-            'curso': self.curso,
+            'curso': self.curso.serialize(),
+            'sede': self.sede.serialize(),
+            'profesor': self.profesor.serialize(),
+            'fecha': self.fecha,
+            'hora': self.hora,
+            'text': self.text
         }
 
 class Reserva(db.Model):
@@ -85,19 +102,28 @@ class Reserva(db.Model):
     id=db.Column(db.Integer, primary_key=True)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    user = db.relationship(User)
+    cliente = db.relationship(User)
 
-    detail_curso_id=db.Column(db.Integer, db.ForeignKey('detailsCurso.id'), nullable=False)
-    detail_curso_fecha=db.Column(db.Integer, db.ForeignKey('detailsCurso.fecha'), nullable=False)
-    detail_curso = db.relationship(DetailCurso)
+    detailscurso_id = db.Column(db.Integer, db.ForeignKey('detailscursos.id'), nullable=False)
+    detailscurso = db.relationship(DetailsCurso) #Las relaciones de relationship es sempre para el nombre del modelo
 
     def __repr__(self):
-        return 'Reserva %r' % self.user.username
+       return 'Reserva %r' % self.user.username
 
     def serialize(self):
-        return{
+        user = None
+        detailscurso = None
+        
+        if self.detailscurso_id:
+            dc = DetailsCurso.query.get(self.detailscurso_id)
+            detailscurso = dc.serialize()
+        
+        if self.user_id:
+            u = User.query.get(self.user_id)
+            user = u.serialize()
+
+        return {
             'id': self.id,
-            'fecha': self.fecha,
-            'user': self.serialize.user,
-            'detail_curso': self.serialize.detail_curso,
-        } """
+            'user_id': self.user_id,
+            'detailscurso_id': self.detailscurso_id
+        } 

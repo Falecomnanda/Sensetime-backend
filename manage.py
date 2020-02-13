@@ -4,13 +4,16 @@ from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from flask_cors import CORS
 from flask_mail import Mail, Message
-from flask_jwt_extended import (
-    JWTManager
-)
+from flask_jwt_extended import (JWTManager)
 from models import db, User
 from routes.user import route_users
 from routes.auth import auth
-
+from routes.curso import route_cursos
+from routes.sede import route_sedes
+from routes.profesores import route_profesores
+from routes.detailscursos import route_detailscursos
+from routes.reserva import route_reservas
+from routes.filter import route_filters
 from libs.functions import allowed_file
 from werkzeug.utils import secure_filename
 
@@ -37,7 +40,6 @@ app.config['MAIL_USERNAME'] = 'cm.seb90@gmail.com'
 app.config['MAIL_PASSWORD'] = 'tdrzlquykyzmnsch' 
 
 app.config['JWT_SECRET_KEY'] = 'super-secrets'
-#app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False #inhabilita la expiración del token
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=3) #inhabilita en tres dias el token
 
 jwt = JWTManager(app)
@@ -57,6 +59,12 @@ def home():
 
 app.register_blueprint(auth)
 app.register_blueprint(route_users, url_prefix='/api')
+app.register_blueprint(route_cursos, url_prefix='/api')
+app.register_blueprint(route_sedes, url_prefix='/api')
+app.register_blueprint(route_profesores, url_prefix='/api')
+app.register_blueprint(route_detailscursos, url_prefix='/api')
+app.register_blueprint(route_reservas, url_prefix='/api')
+app.register_blueprint(route_filters, url_prefix='/api')
 
 @app.route('/sendmail', methods=['POST'])
 def sendmail():
@@ -100,6 +108,7 @@ def upload_file(filename=None):
             return jsonify({"msg":"file uploaded"}), 200
         else:
             return jsonify({"msg":"file not allowed"}), 400 
+
 
 if __name__ == '__main__':
     manager.run()

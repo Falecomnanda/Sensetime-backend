@@ -11,7 +11,7 @@ route_users = Blueprint('route_users', __name__)
 
 @route_users.route('/users', methods=['GET','POST'])
 @route_users.route('/users/<int:id>', methods=['GET','PUT','DELETE'])
-@jwt_required
+#@jwt_required
 def users(id=None):
     if request.method == 'GET':
         if id is not None:
