@@ -14,6 +14,7 @@ from routes.profesores import route_profesores
 from routes.detailscursos import route_detailscursos
 from routes.reserva import route_reservas
 from routes.filter import route_filters
+#from routes.deleterama import route_deleteramas
 from libs.functions import allowed_file
 from werkzeug.utils import secure_filename
 
@@ -65,6 +66,7 @@ app.register_blueprint(route_profesores, url_prefix='/api')
 app.register_blueprint(route_detailscursos, url_prefix='/api')
 app.register_blueprint(route_reservas, url_prefix='/api')
 app.register_blueprint(route_filters, url_prefix='/api')
+#app.register_blueprint(route_deleteramas, url_prefix='/api')
 
 @app.route('/sendmail', methods=['POST'])
 def sendmail():

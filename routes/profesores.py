@@ -54,9 +54,8 @@ def profesores(id=None):
     if request.method == 'DELETE':
         profesor = Profesor.query.get(id)
         
-        
         db.session.delete(profesor)
         db.session.commit()
 
-        return jsonify({'profesor': 'deleted',}), 400
+        return jsonify({'profesor': 'deleted',}), 200
 

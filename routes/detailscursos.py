@@ -10,10 +10,10 @@ route_detailscursos = Blueprint('route_detailscursos', __name__)
 def detailscursos(id=None):
     if request.method == 'GET':
         if id is not None:
-            detailscursos = DetailsCurso.query.get(id)
+            detailscurso = DetailsCurso.query.get(id)
             
-            if detailscursos:
-                return jsonify(detailscursos.serialize()), 200
+            if detailscurso:
+                return jsonify(detailscurso.serialize()), 200
             else:
                 return jsonify({"detailscursos":"not found"}), 404
         else:
